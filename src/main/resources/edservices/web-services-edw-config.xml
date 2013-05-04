@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	
+	<!-- EDW Spring WebServiceTemplate instance -->
+    <bean id="edwServicesTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+        <constructor-arg ref="messageFactory"/>
+        <property name="marshaller" ref="marshaller"/>
+        <property name="unmarshaller" ref="marshaller"/>
+        <property name="messageSender">
+            <bean class="org.springframework.ws.transport.http.CommonsHttpMessageSender"/>
+        </property>
+        <property name="interceptors">
+            <list>
+                <ref bean="securityInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+	<!-- Security -->
+    <bean id="securityInterceptor" class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
+    	<property name="securementActions" value="UsernameToken"/>
+        <property name="securementUsername" value="julien.dupre@bnpparibas.com"/>
+	    <property name="securementPassword" value="GOE4Ever"/>
+	    <property name="securementPasswordType" value="PasswordText"/>
+	    <!-- <property name="securementUsernameTokenElements" value="Nonce Created"/> -->
+    </bean>
+    
+    <!-- PerformanceDataUploadService configuration -->
+    <bean id="uploadPerformanceDataService" class="com.bnpparibas.goe.service.edservice.impl.UploadPerformanceDataServiceImpl">
+		<constructor-arg index="0" value="${PerformanceDataUploadService.endpoint}"/>
+		<constructor-arg index="1" value="${PerformanceDataUploadService.addressing.action}"/>
+	</bean>
+
+</beans>
